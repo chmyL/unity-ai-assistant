@@ -1,0 +1,2692 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Unity AI 助手 - 控制面板</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#00629e",
+                        "surface-container-lowest": "#060e20",
+                        "secondary-fixed": "#d9e3f2",
+                        "on-tertiary-container": "#003a32",
+                        "surface-container-highest": "#2d3449",
+                        "primary-fixed": "#cfe5ff",
+                        "on-surface": "#dae2fd",
+                        "on-secondary-fixed-variant": "#3e4853",
+                        "on-primary-container": "#003559",
+                        "on-tertiary": "#003730",
+                        "on-background": "#dae2fd",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#283044",
+                        "surface-dim": "#0b1326",
+                        "primary": "#9acbff",
+                        "primary-fixed-dim": "#9acbff",
+                        "surface-tint": "#9acbff",
+                        "background": "#0b1326",
+                        "secondary-fixed-dim": "#bdc7d6",
+                        "on-error-container": "#ffdad6",
+                        "inverse-surface": "#dae2fd",
+                        "surface-container-low": "#131b2e",
+                        "surface": "#0b1326",
+                        "surface-variant": "#2d3449",
+                        "on-secondary": "#27313c",
+                        "outline-variant": "#3f4852",
+                        "surface-bright": "#31394d",
+                        "secondary-container": "#404a56",
+                        "on-secondary-fixed": "#121c27",
+                        "on-primary": "#003355",
+                        "tertiary": "#7ad7c4",
+                        "tertiary-fixed-dim": "#7ad7c4",
+                        "on-tertiary-fixed-variant": "#005046",
+                        "error-container": "#93000a",
+                        "outline": "#89919e",
+                        "tertiary-container": "#4caa99",
+                        "tertiary-fixed": "#97f3e0",
+                        "surface-container-high": "#222a3d",
+                        "on-surface-variant": "#bec7d4",
+                        "on-error": "#690005",
+                        "surface-container": "#171f33",
+                        "on-primary-fixed-variant": "#004a79",
+                        "on-primary-fixed": "#001d34",
+                        "primary-container": "#00a1ff",
+                        "on-secondary-container": "#afb9c7",
+                        "secondary": "#bdc7d6",
+                        "on-tertiary-fixed": "#00201b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sidebar-width": "260px",
+                        "stack-gap-md": "16px",
+                        "inspector-width": "320px",
+                        "container-padding": "24px",
+                        "gutter": "16px",
+                        "stack-gap-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "code-block": ["JetBrains Mono"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["JetBrains Mono"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "code-block": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { background-color: #0b1326; color: #dae2fd; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3f4852; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #89919e; }
+        .thought-details summary::-webkit-details-marker { display: none; }
+        .thought-details[open] summary { border-bottom: 1px solid #3f4852; padding-bottom: 8px; margin-bottom: 8px; }
+        .diff-line-added { background-color: rgba(122, 215, 196, 0.1); border-left: 2px solid #7ad7c4; }
+        .diff-line-removed { background-color: rgba(255, 180, 171, 0.1); border-left: 2px solid #ffb4ab; }
+
+        /* ==================== 项目文档弹窗 ==================== */
+        .project-docs-dialog {
+            width: min(1100px, 88vw);
+            height: min(720px, 82vh);
+            margin: auto;
+            padding: 0;
+            border: 1px solid #3f4852;
+            border-radius: 16px;
+            background: #131b2e;
+            color: #dae2fd;
+            overflow: hidden;
+        }
+
+        .project-docs-dialog::backdrop {
+            background: rgba(3, 8, 20, 0.72);
+            backdrop-filter: blur(4px);
+        }
+
+        .project-docs-dialog-header {
+            height: 64px;
+            border-bottom: 1px solid #3f4852;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: rgba(19, 27, 46, 0.96);
+        }
+
+        .project-docs-dialog-body {
+            display: flex;
+            height: calc(100% - 64px);
+            min-height: 0;
+        }
+
+        .project-docs-list-panel {
+            width: 32%;
+            min-width: 260px;
+            border-right: 1px solid #3f4852;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .project-docs-content-panel {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .project-docs-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .project-doc-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 12px;
+            border-radius: 9px;
+            text-align: left;
+            color: #bec7d4;
+            transition: all 0.15s ease;
+        }
+
+        .project-doc-item:hover {
+            background: rgba(45, 52, 73, 0.65);
+            color: #dae2fd;
+        }
+
+        .project-doc-item.active {
+            background: rgba(64, 74, 86, 0.55);
+            color: #9acbff;
+        }
+
+        .project-doc-empty {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #89919e;
+            padding: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="flex h-screen w-full">
+
+<!-- Sidebar (Left) - Fixed 260px -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-low border-r border-outline-variant flex flex-col z-50" id="sidebar">
+    <!-- Header: User Profile -->
+    <div class="p-4 border-b border-outline-variant flex items-center gap-3">
+        <div class="flex items-center gap-3 w-full" id="current-user">
+            <div class="flex items-center gap-3 w-full">
+                <img alt="用户头像" class="w-10 h-10 rounded-full border border-primary/20" src="">
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-headline-md text-headline-md text-on-surface truncate">D</h3>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant truncate">技术架构师</p>
+                </div>
+                <button id="switch-user-btn" class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-variant rounded-lg transition-all" title="切换用户">
+                    <span class="material-symbols-outlined text-[18px]">switch_account</span>
+                </button>
+                <button id="logout-btn" class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-variant rounded-lg transition-all" title="退出登录">
+                    <span class="material-symbols-outlined text-[18px]">logout</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-4 py-6 space-y-8">
+        <!-- Projects Section -->
+        <section>
+            <div class="flex items-center justify-between mb-3">
+                <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">项目</span>
+                <button class="p-1 hover:bg-surface-variant rounded transition-all" id="new-project-btn">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-2">
+                <select class="flex-1 min-w-0 bg-surface-container-highest border-none text-on-surface font-body-md text-body-md rounded-lg focus:ring-1 focus:ring-primary py-2 px-3" id="project-select">
+                    <option>Cyberpunk_RPG_Core</option>
+                    <option>Mobile_Runner_Prototype</option>
+                    <option>Shaders_Lab_V2</option>
+                </select>
+                <button id="delete-project-btn" class="p-2 rounded text-on-surface-variant hover:text-error hover:bg-error/20 transition-all shrink-0" title="删除当前项目">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Chat Sessions Section -->
+        <section>
+            <div class="flex items-center justify-between mb-3">
+                <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">对话会话</span>
+                <button class="p-1 hover:bg-surface-variant rounded transition-all" id="new-chat-btn">
+                    <span class="material-symbols-outlined text-[18px]">chat_add_on</span>
+                </button>
+            </div>
+            <div class="space-y-1">
+                <div class="flex items-center gap-3 px-4 py-3 text-primary bg-secondary-container/30 border-l-4 border-primary rounded-r-lg cursor-pointer">
+                    <span class="material-symbols-outlined text-[20px]">forum</span>
+                    <span class="font-body-md text-body-md truncate">移动系统修复</span>
+                </div>
+                <div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50 transition-colors rounded-lg cursor-pointer">
+                    <span class="material-symbols-outlined text-[20px]">forum</span>
+                    <span class="font-body-md text-body-md truncate">着色器优化</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overview Section - 修复重复ID: 原 script-count 改为 linked-script-count -->
+        <section class="bg-surface-container-high/50 p-3 rounded-xl border border-outline-variant/30">
+            <div class="flex items-center justify-between mb-3">
+                <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">概览</span>
+                <button class="p-1 hover:bg-surface-variant rounded transition-all" id="refresh-btn">
+                    <span class="material-symbols-outlined text-[18px]">refresh</span>
+                </button>
+            </div>
+            <div class="font-body-md text-body-md text-on-surface-variant mb-2 leading-relaxed" id="project-overview">
+                用于具有物理交互的 3D 第三人称控制器的主要逻辑。
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+                <span class="font-label-sm text-label-sm text-on-surface-variant">已关联脚本</span>
+                <span class="font-label-sm text-label-sm text-primary font-bold" id="linked-script-count">14 文件</span>
+            </div>
+        </section>
+
+        <!-- Memory Stats Section - 修复重复ID: 原 script-count 改为 indexed-script-count -->
+        <section class="bg-surface-container-high/50 p-3 rounded-xl border border-outline-variant/30 mt-4" id="memory-stats">
+            <div class="flex items-center justify-between mb-3">
+                <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">✠ Memory状态</span>
+            </div>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">✄ 已索引脚本</span>
+                    <span class="font-label-sm text-label-sm text-primary font-bold" id="indexed-script-count">14 文件</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">🔗 依赖关系</span>
+                    <span class="font-label-sm text-label-sm text-primary font-bold" id="deps-count">42</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">🧩 向量块</span>
+                    <span class="font-label-sm text-label-sm text-primary font-bold" id="vector-chunks-count">1,204</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">🕒 最近更新</span>
+                    <span class="font-label-sm text-label-sm text-primary font-bold" id="last-updated-script">PlayerController.cs</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">⚙️ 总方法数</span>
+                    <span class="font-label-sm text-label-sm text-primary font-bold" id="total-methods">156</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">📞 调用点总数</span>
+                    <span class="font-label-sm text-label-sm text-primary font-bold" id="total-call-sites">312</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-t border-outline-variant space-y-3">
+        <button class="w-full flex items-center justify-center gap-2 bg-surface-variant hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm py-2.5 rounded-lg transition-all border border-outline-variant/50" id="project-docs-btn">
+            <span class="material-symbols-outlined text-[18px]">description</span>
+            项目文档
+        </button>
+        <button class="w-full flex items-center justify-center gap-2 bg-surface-variant hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm py-2.5 rounded-lg transition-all border border-outline-variant/50" id="global-docs-btn">
+            <span class="material-symbols-outlined text-[18px]">public</span>
+            全局文档
+        </button>
+        <div class="flex items-center gap-2 px-2" id="upload-status">
+            <div class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">系统就绪</span>
+        </div>
+        <input class="hidden" id="hidden-file-input" type="file" multiple>
+    </div>
+</aside>
+
+<!-- ==================== 项目文档弹窗 ==================== -->
+<dialog id="project-docs-dialog" class="project-docs-dialog">
+    <!-- 弹窗头部 -->
+    <div class="project-docs-dialog-header">
+        <div class="flex items-center gap-3 min-w-0">
+            <span class="material-symbols-outlined text-primary">description</span>
+
+            <div class="min-w-0">
+                <h2 class="font-headline-md text-headline-md text-on-surface truncate">
+                    项目文档
+                </h2>
+                <p class="font-label-sm text-label-sm text-on-surface-variant truncate"
+                   id="project-docs-project-name">
+                    当前项目
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-1">
+            <!-- 刷新文档列表 -->
+            <button
+                type="button"
+                id="project-docs-refresh-btn"
+                class="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-all"
+                title="刷新文档列表">
+                <span class="material-symbols-outlined text-[20px]">refresh</span>
+            </button>
+
+            <!-- 关闭 -->
+            <button
+                type="button"
+                id="project-docs-close-btn"
+                class="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-all"
+                title="关闭">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 弹窗主体 -->
+    <div class="project-docs-dialog-body">
+
+        <!-- 左侧：文档列表 -->
+        <div class="project-docs-list-panel">
+
+            <!-- 搜索 -->
+            <div class="p-4 border-b border-outline-variant">
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline">
+                        search
+                    </span>
+
+                    <input
+                        id="project-docs-search"
+                        type="text"
+                        placeholder="搜索项目文档..."
+                        class="w-full bg-surface-container-highest border border-outline-variant text-on-surface font-body-md text-body-md rounded-lg py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-primary">
+                </div>
+            </div>
+
+            <!-- 文档数量 -->
+            <div class="px-4 py-3 border-b border-outline-variant flex items-center justify-between">
+                <span class="font-label-sm text-label-sm text-on-surface-variant">
+                    项目文档
+                </span>
+
+                <span
+                    id="project-docs-count"
+                    class="font-label-sm text-label-sm text-primary">
+                    0 个
+                </span>
+            </div>
+
+            <!-- 文档列表 -->
+            <div id="project-docs-list" class="project-docs-list">
+                <div class="project-doc-empty">
+                    正在加载文档...
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：文档内容 -->
+        <div class="project-docs-content-panel">
+
+            <!-- 文档内容头部 -->
+            <div class="px-5 py-4 border-b border-outline-variant flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[20px]">
+                            description
+                        </span>
+
+                        <h3
+                            id="project-doc-detail-title"
+                            class="font-headline-md text-headline-md text-on-surface truncate">
+                            未选择文档
+                        </h3>
+                    </div>
+
+                    <p
+                        id="project-doc-detail-status"
+                        class="mt-1 font-label-sm text-label-sm text-on-surface-variant">
+                        选择左侧文档查看内容
+                    </p>
+                </div>
+
+                <!-- 版本选择器（只有存在历史版本时才显示） -->
+                <div id="project-doc-version-wrapper" class="hidden shrink-0">
+                    <select
+                        id="project-doc-version-select"
+                        class="bg-surface-container-highest border border-outline-variant text-on-surface font-label-sm text-label-sm rounded-lg py-1.5 px-2 focus:outline-none focus:ring-1 focus:ring-primary">
+                    </select>
+                </div>
+            </div>
+
+            <!-- 文档正文 -->
+            <div
+                id="project-doc-detail-content"
+                class="flex-1 overflow-y-auto p-5 font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
+                <div class="project-doc-empty h-full">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-[56px] opacity-30">
+                            description
+                        </span>
+
+                        <p class="mt-3 font-body-md text-body-md">
+                            选择左侧文档查看内容
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</dialog>
+
+<!-- ==================== 全局文档弹窗 ==================== -->
+<dialog id="global-docs-dialog" class="project-docs-dialog">
+    <div class="project-docs-dialog-header">
+        <div class="flex items-center gap-3 min-w-0">
+            <span class="material-symbols-outlined text-primary">public</span>
+            <div class="min-w-0">
+                <h2 class="font-headline-md text-headline-md text-on-surface truncate">全局文档</h2>
+                <p class="font-label-sm text-label-sm text-on-surface-variant truncate">所有项目共享的知识库</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-1">
+            <button type="button" id="global-docs-upload-btn" class="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-all" title="上传全局文档">
+                <span class="material-symbols-outlined text-[20px]">upload</span>
+            </button>
+            <button type="button" id="global-docs-refresh-btn" class="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-all" title="刷新列表">
+                <span class="material-symbols-outlined text-[20px]">refresh</span>
+            </button>
+            <button type="button" id="global-docs-close-btn" class="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-all" title="关闭">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="project-docs-dialog-body">
+        <div class="project-docs-list-panel">
+            <div class="p-4 border-b border-outline-variant">
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+                    <input id="global-docs-search" type="text" placeholder="搜索全局文档..." class="w-full bg-surface-container-highest border border-outline-variant text-on-surface font-body-md text-body-md rounded-lg py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-primary">
+                </div>
+            </div>
+            <div class="px-4 py-3 border-b border-outline-variant flex items-center justify-between">
+                <span class="font-label-sm text-label-sm text-on-surface-variant">全局文档</span>
+                <span id="global-docs-count" class="font-label-sm text-label-sm text-primary">0 个</span>
+            </div>
+            <div id="global-docs-list" class="project-docs-list">
+                <div class="project-doc-empty">正在加载文档...</div>
+            </div>
+        </div>
+
+        <div class="project-docs-content-panel">
+            <div class="px-5 py-4 border-b border-outline-variant flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[20px]">description</span>
+                        <h3 id="global-doc-detail-title" class="font-headline-md text-headline-md text-on-surface truncate">未选择文档</h3>
+                    </div>
+                    <p id="global-doc-detail-status" class="mt-1 font-label-sm text-label-sm text-on-surface-variant">选择左侧文档查看内容</p>
+                </div>
+            </div>
+            <div id="global-doc-detail-content" class="flex-1 overflow-y-auto p-5 font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
+                <div class="project-doc-empty h-full">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-[56px] opacity-30">description</span>
+                        <p class="mt-3 font-body-md text-body-md">选择左侧文档查看内容</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
+
+<input class="hidden" id="global-docs-file-input" type="file" multiple>
+
+<!-- Main Content Area (Flexible) -->
+<main class="ml-[260px] mr-[320px] flex-1 flex flex-col h-full bg-background relative">
+    <!-- Center Panel Header -->
+    <header class="h-14 border-b border-outline-variant flex items-center px-6 justify-between bg-surface/50 backdrop-blur-md sticky top-0 z-10">
+        <h2 class="font-headline-md text-headline-md text-on-surface">交互式会话</h2>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 text-on-surface-variant">
+                <span class="material-symbols-outlined text-[18px]">terminal</span>
+                <span class="font-label-sm text-label-sm uppercase tracking-widest">v2023.2.4f1</span>
+            </div>
+            <span class="w-px h-4 bg-outline-variant"></span>
+            <span class="font-label-sm text-label-sm text-tertiary">GPT-4 Turbo</span>
+        </div>
+    </header>
+
+    <!-- Chat Container -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-8" id="chat-messages">
+        <!-- User Message -->
+        <div class="user-message flex flex-col items-end">
+            <div class="user-text max-w-[85%] bg-secondary-container text-on-secondary-container px-4 py-3 rounded-2xl rounded-tr-none font-body-md text-body-md shadow-sm">
+                你好，为角色生成一个使用新 Unity 输入系统的基础移动脚本。它应该处理跳跃和地面检测。
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant mt-2 px-1">10:42 AM</span>
+        </div>
+
+        <!-- Assistant Message -->
+        <div class="assistant-message flex flex-col items-start max-w-[95%]">
+            <details class="thought-details mb-2 w-full border-l-4 border-tertiary/50 bg-surface-container-low/40 p-3 rounded-r-xl">
+                <summary class="cursor-pointer font-label-sm text-label-sm text-on-surface-variant flex items-center gap-2 list-none select-none">
+                    <span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings: 'FILL' 1;">psychology</span>
+                    思考过程: 正在分析 Unity C# 需求...
+                </summary>
+                <div class="thought-content font-code-block text-code-block text-on-surface-variant/80 mt-2 space-y-2 pl-2">
+                    <p>&gt; Identifying target components: CharacterController, PlayerInput.</p>
+                    <p>&gt; Selecting logic: Physics-based vertical velocity for gravity/jump.</p>
+                    <p>&gt; Structure: Serialized fields for speed and jump height.</p>
+                </div>
+            </details>
+            <div class="assistant-answer bg-surface-container-high text-on-surface px-4 py-3 rounded-2xl rounded-tl-none font-body-md text-body-md leading-relaxed shadow-sm max-w-full">
+                <p class="mb-4">这是你的 <span class="text-primary font-bold">PlayerController.cs</span> 脚本。我使用了 <code class="bg-surface-variant px-1 rounded font-code-block">CharacterController</code> 进行移动，并使用了 <code class="bg-surface-variant px-1 rounded font-code-block">InputsSystem</code> 进行现代化的处理。</p>
+                <!-- Inline Code Block Example -->
+                <div class="bg-surface-container-highest rounded-xl overflow-hidden border border-outline-variant mb-4">
+                    <div class="flex items-center justify-between px-4 py-2 bg-surface-container-high border-b border-outline-variant">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">PlayerController.cs</span>
+                        <button class="text-primary hover:underline font-label-sm text-label-sm">在检视面板预览</button>
+                    </div>
+                    <pre class="p-4 font-code-block text-code-block text-on-surface overflow-x-auto"><code>using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerController : MonoBehaviour {
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float jumpHeight = 2f;
+    ...</code></pre>
+                </div>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant mt-2 px-1">10:43 AM</span>
+        </div>
+    </div>
+
+    <!-- Input Area (Sticky Bottom) -->
+    <div class="p-6 bg-background">
+        <div class="relative max-w-4xl mx-auto group">
+            <div class="bg-surface-container rounded-2xl border border-outline-variant focus-within:border-primary/50 focus-within:shadow-[0_0_20px_rgba(154,203,255,0.1)] transition-all overflow-hidden">
+                <textarea class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-body-md text-body-md p-4 resize-none min-h-[56px] placeholder:text-outline" id="user-input" placeholder="命令 Unity AI..." rows="1"></textarea>
+                <div class="flex items-center justify-between px-4 pb-3">
+                    <div class="flex items-center gap-1">
+                        <button id="chat-attach-btn" class="p-2 hover:bg-surface-variant rounded-lg text-on-surface-variant transition-all" title="上传文档">
+                            <span class="material-symbols-outlined text-[20px]">attach_file</span>
+                        </button>
+                        <button class="p-2 hover:bg-surface-variant rounded-lg text-on-surface-variant transition-all">
+                            <span class="material-symbols-outlined text-[20px]">code</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all" id="clear-btn">清空</button>
+                        <button class="bg-primary text-on-primary px-4 py-1.5 rounded-lg font-label-sm text-label-sm font-bold flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all" id="send-btn">
+                            发送 <span class="material-symbols-outlined text-[18px]">send</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Code Panel (Right) - Fixed 320px -->
+<aside class="fixed right-0 top-0 h-full w-[320px] bg-surface-container-low border-l border-outline-variant flex flex-col z-50" id="inspector">
+    <!-- Header -->
+    <div class="p-4 border-b border-outline-variant space-y-4">
+        <div class="flex items-center justify-between">
+            <span class="font-headline-md text-headline-md text-on-surface">项目智能分析</span>
+            <span class="material-symbols-outlined text-on-surface-variant">account_tree</span>
+        </div>
+        <div class="space-y-2">
+            <div class="flex items-center justify-between ml-1">
+                <label class="font-label-sm text-label-sm text-on-surface-variant">当前脚本</label>
+                <button id="delete-script-btn" class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-error/20 transition-all" title="删除当前脚本">
+                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                </button>
+            </div>
+            <select class="w-full bg-surface-container-highest border-none text-on-surface font-body-md text-body-md rounded-lg focus:ring-1 focus:ring-primary py-2 px-3" id="script-select">
+                <option>PlayerController.cs</option>
+                <option>EnemyAI.cs</option>
+                <option>InventoryManager.cs</option>
+            </select>
+            <input id="current-script-name" type="hidden" value="PlayerController.cs">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+            <div>
+                <label class="font-label-sm text-label-sm text-on-surface-variant ml-1">版本</label>
+                <select class="w-full bg-surface-container-highest border-none text-on-surface font-label-sm text-label-sm rounded-lg py-1.5 px-2" id="version-select">
+                    <option>v1.0.4 (最新)</option>
+                    <option>v1.0.3</option>
+                    <option>v1.0.2</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button class="w-full bg-surface-variant hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm py-1.5 rounded-lg border border-outline-variant transition-all" id="load-version-btn">加载</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Content Area -->
+    <div class="p-4 border-b border-outline-variant space-y-4" id="inspector-summaries">
+        <details id="change-summary-detail" open>
+            <summary class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider cursor-pointer hover:text-primary transition-colors">
+                脚本说明
+            </summary>
+            <div id="change-summary" class="mt-2 space-y-1 font-body-md text-body-md max-h-[180px] overflow-y-auto pr-1">
+                <!-- 动态内容将在这里填充 -->
+                <div class="text-on-surface-variant">暂无脚本说明</div>
+            </div>
+        </details>
+
+        <details id="affected-files-detail" open>
+            <summary class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider cursor-pointer hover:text-primary transition-colors">
+                依赖的脚本
+            </summary>
+                        <div id="affected-files" class="mt-2 flex flex-wrap gap-2 max-h-[100px] overflow-y-auto pr-1">
+                <!-- 动态内容将在这里填充 -->
+                <span class="text-on-surface-variant">暂无依赖</span>
+            </div>
+        </details>
+    </div>
+
+    <div class="flex-1 min-h-0 overflow-y-auto bg-surface-container-lowest font-code-block text-code-block p-1" id="diff-viewer">
+        <!-- Line by line diff representation -->
+        <div class="flex hover:bg-surface-variant/20">
+            <span class="w-10 text-right pr-2 text-outline shrink-0 select-none">1</span>
+            <span class="pl-2">public class PlayerController : MonoBehaviour {</span>
+        </div>
+        <div class="flex hover:bg-surface-variant/20">
+            <span class="w-10 text-right pr-2 text-outline shrink-0 select-none">2</span>
+            <span class="pl-2 text-primary">    [SerializeField] private float speed = 5f;</span>
+        </div>
+        <div class="flex diff-line-added">
+            <span class="w-10 text-right pr-2 text-outline shrink-0 select-none">3</span>
+            <span class="pl-2 text-tertiary font-bold">+   [SerializeField] private float jumpPower = 12f;</span>
+        </div>
+        <div class="flex diff-line-removed">
+            <span class="w-10 text-right pr-2 text-outline shrink-0 select-none">4</span>
+            <span class="pl-2 text-error/70 line-through">-   private float gravity = -9.81f;</span>
+        </div>
+        <div class="flex hover:bg-surface-variant/20">
+            <span class="w-10 text-right pr-2 text-outline shrink-0 select-none">5</span>
+            <span class="pl-2">    private CharacterController controller;</span>
+        </div>
+        <div class="py-10 flex flex-col items-center justify-center opacity-20 pointer-events-none">
+            <span class="material-symbols-outlined text-[48px]">code_blocks</span>
+            <p class="font-label-sm text-label-sm">向下滑动查看更多</p>
+        </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="p-4 border-t border-outline-variant grid grid-cols-2 gap-3">
+        <button class="flex items-center justify-center gap-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm py-2.5 rounded-lg border border-outline-variant transition-all active:scale-95" id="copy-code-btn">
+            <span class="material-symbols-outlined text-[18px]">content_copy</span>
+            复制
+        </button>
+        <button class="flex items-center justify-center gap-2 bg-primary text-on-primary font-label-sm text-label-sm py-2.5 rounded-lg hover:brightness-110 transition-all active:scale-95" id="download-code-btn">
+            <span class="material-symbols-outlined text-[18px]">download</span>
+            同步
+        </button>
+    </div>
+</aside>
+
+<script>
+    // ==================== 与后端 API 交互 ====================
+    let currentUserId = null;
+    let currentProjectId = null;
+    let currentChatId = null;
+    let projectDocuments = [];
+    let currentProjectDocument = null;
+    let globalDocuments = [];
+    let currentGlobalDocument = null;
+    const sendBtn = document.getElementById('send-btn');
+    const userInput = document.getElementById('user-input');
+    const chatContainer = document.getElementById('chat-messages');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const projectDocsBtn = document.getElementById('project-docs-btn');
+    const hiddenFileInput = document.getElementById('hidden-file-input');
+    const deleteScriptBtn = document.getElementById('delete-script-btn');
+    const uploadStatusSpan = document.querySelector('#upload-status span');
+    const projectDocsDialog = document.getElementById('project-docs-dialog');
+    const projectDocsList = document.getElementById('project-docs-list');
+    const projectDocsSearch = document.getElementById('project-docs-search');
+    const projectDocsCount = document.getElementById('project-docs-count');
+    const projectDocsProjectName = document.getElementById('project-docs-project-name');
+    const projectDocsRefreshBtn = document.getElementById('project-docs-refresh-btn');
+    const projectDocsCloseBtn = document.getElementById('project-docs-close-btn');
+    const projectDocDetailTitle = document.getElementById('project-doc-detail-title');
+    const projectDocDetailStatus = document.getElementById('project-doc-detail-status');
+    const projectDocDetailContent = document.getElementById('project-doc-detail-content');
+    const projectDocVersionWrapper = document.getElementById('project-doc-version-wrapper');
+    const projectDocVersionSelect = document.getElementById('project-doc-version-select');
+    // 全局文档相关 DOM
+    const globalDocsDialog = document.getElementById('global-docs-dialog');
+    const globalDocsBtn = document.getElementById('global-docs-btn');
+    const globalDocsList = document.getElementById('global-docs-list');
+    const globalDocsSearch = document.getElementById('global-docs-search');
+    const globalDocsCount = document.getElementById('global-docs-count');
+    const globalDocsRefreshBtn = document.getElementById('global-docs-refresh-btn');
+    const globalDocsCloseBtn = document.getElementById('global-docs-close-btn');
+    const globalDocsUploadBtn = document.getElementById('global-docs-upload-btn');
+    const globalDocsFileInput = document.getElementById('global-docs-file-input');
+    const globalDocDetailTitle = document.getElementById('global-doc-detail-title');
+    const globalDocDetailStatus = document.getElementById('global-doc-detail-status');
+    const globalDocDetailContent = document.getElementById('global-doc-detail-content');
+
+    // ---------- 保存当前上下文 ----------
+    function saveCurrentContext() {
+        if (currentUserId) {
+            localStorage.setItem("currentUserId", currentUserId);
+        } else {
+            localStorage.removeItem("currentUserId");
+        }
+
+        if (currentProjectId) {
+            localStorage.setItem("currentProjectId", currentProjectId);
+        } else {
+            localStorage.removeItem("currentProjectId");
+        }
+
+        if (currentChatId) {
+            localStorage.setItem("currentChatId", currentChatId);
+        } else {
+            localStorage.removeItem("currentChatId");
+        }
+    }
+
+    function loadSavedContext() {
+        return {
+            userId: localStorage.getItem("currentUserId"),
+            projectId: localStorage.getItem("currentProjectId"),
+            chatId: localStorage.getItem("currentChatId")
+        };
+    }
+
+    // ---------- 统一 API 请求 ----------
+    // 每个请求自动携带当前的用户、项目、会话上下文。
+    async function apiFetch(url, options = {}){
+        const headers = new Headers(options.headers || {});
+
+        if (currentUserId) {
+            headers.set('X-User-ID', currentUserId);
+        }
+
+        if (currentProjectId) {
+            headers.set('X-Project-ID', currentProjectId);
+        }
+
+        if (currentChatId) {
+            headers.set('X-Chat-ID', currentChatId);
+        }
+
+        return fetch(url, {
+            ...options,
+            headers
+        });
+    }
+
+    // ---------- 辅助函数 ----------
+    function escapeHtml(str) {
+        return String(str ?? '').replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function formatAssistantText(text) {
+        return escapeHtml(text).replace(/\n/g, '<br>');
+    }
+
+    function getCurrentTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function scrollToBottom() {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // 高亮当前选中的会话
+    function highlightCurrentChat(activeChatId) {
+        const chatListDiv = document.querySelector('#sidebar .space-y-1');
+        if (!chatListDiv) return;
+        // 移除所有会话的高亮样式
+        Array.from(chatListDiv.children).forEach(child => {
+            child.classList.remove('bg-secondary-container/30', 'text-primary', 'border-l-4', 'border-primary');
+            child.classList.add('text-on-surface-variant', 'hover:text-on-surface', 'hover:bg-surface-variant/50');
+            // 确保样式类不会叠加错误
+        });
+        // 为当前选中的会话添加高亮
+        const targetItem = Array.from(chatListDiv.children).find(
+            child => child.querySelector('.font-body-md')?.innerText === activeChatId
+        );
+        if (targetItem) {
+            targetItem.classList.remove('text-on-surface-variant', 'hover:text-on-surface', 'hover:bg-surface-variant/50');
+            targetItem.classList.add('bg-secondary-container/30', 'text-primary', 'border-l-4', 'border-primary');
+        }
+    }
+
+    // 添加用户消息
+    function addUserMessage(text) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'user-message flex flex-col items-end';
+        messageDiv.innerHTML = `
+            <div class="user-text max-w-[85%] bg-secondary-container text-on-secondary-container px-4 py-3 rounded-2xl rounded-tr-none font-body-md text-body-md shadow-sm">
+                ${escapeHtml(text)}
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant mt-2 px-1">${getCurrentTime()}</span>
+        `;
+        chatContainer.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // 添加助手消息（支持思考过程）
+    function addAssistantMessage(text, thought = '') {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'assistant-message flex flex-col items-start max-w-[95%]';
+        let thoughtHtml = '';
+        if (thought && thought.trim()) {
+            thoughtHtml = `
+                <details class="thought-details mb-4 border-l-4 border-tertiary/50 bg-surface-container-low/40 p-3 rounded-r-xl">
+                    <summary class="cursor-pointer font-label-sm text-label-sm text-on-surface-variant flex items-center gap-2 list-none select-none">
+                        <span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings: 'FILL' 1;">psychology</span>
+                        思考过程
+                    </summary>
+                    <div class="thought-content font-code-block text-code-block text-on-surface-variant/80 mt-2 space-y-2 pl-2">
+                        ${escapeHtml(thought).replace(/\n/g, '<br>')}
+                    </div>
+                </details>
+            `;
+        }
+        messageDiv.innerHTML = `
+            ${thoughtHtml}
+            <div class="assistant-answer bg-surface-container-high text-on-surface px-4 py-3 rounded-2xl rounded-tl-none font-body-md text-body-md leading-relaxed shadow-sm max-w-full">
+                ${formatAssistantText(text)}
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant px-1">${getCurrentTime()}</span>
+        `;
+        chatContainer.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // ---------- 聊天发送 ----------
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        addUserMessage(message);
+        userInput.value = '';
+        userInput.style.height = 'auto';
+
+        // 显示 loading
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'assistant-message max-w-[95%] opacity-70';
+        loadingDiv.innerHTML = `<div class="bg-surface-container-low/50 p-3 rounded-xl">🤖 AI 正在思考...</div>`;
+        chatContainer.appendChild(loadingDiv);
+        scrollToBottom();
+
+        try {
+            const res = await apiFetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            const reply = data.reply || '抱歉，没有收到回复。';
+            const thought = data.thought || '';
+            loadingDiv.remove();
+            addAssistantMessage(reply, thought);
+            // AI可能生成了新脚本，刷新右侧脚本列表
+            await loadScripts(null, { keepSelection: true });
+            // 刷新左侧 Memory 状态卡片
+            await refreshProjectInfo();
+        } catch (err) {
+            loadingDiv.remove();
+            addAssistantMessage(`❌ 网络或服务器错误：${err.message}`);
+        }
+    }
+
+    // ---------- 项目概览刷新 ----------
+    async function refreshProjectInfo() {
+        try {
+            const res = await apiFetch('/api/project_info');
+            if (!res.ok) throw new Error('获取项目信息失败');
+            const data = await res.json();
+
+            document.getElementById('project-overview').innerText = data.overview || '无项目描述';
+            document.getElementById('linked-script-count').innerText = `${data.script_count || 0} 文件`;
+            document.getElementById('indexed-script-count').innerText = `${data.script_count || 0} 文件`;
+            document.getElementById('deps-count').innerText = data.dep_count || 0;
+            document.getElementById('vector-chunks-count').innerText = (data.vector_chunks || 0).toLocaleString();
+            document.getElementById('last-updated-script').innerText = data.latest_updated || '—';
+            document.getElementById('total-methods').innerText = data.method_count || 0;
+            document.getElementById('total-call-sites').innerText = data.call_site_count || 0;
+        } catch (err) {
+            console.error('刷新项目信息失败:', err);
+            document.getElementById('project-overview').innerText = '加载失败，请检查后端';
+        }
+    }
+
+    // ---------- 用户列表 & 切换 ----------
+    // 获取当前用户
+    async function fetchCurrentUser() {
+        try {
+            const res = await apiFetch('/api/current_user');
+            const data = await res.json();
+            currentUserId = data.user_id;
+            updateUserDisplay();
+            return data.user_id;
+        } catch (err) {
+            console.error('获取当前用户失败:', err);
+            return null;
+        }
+    }
+
+    // 获取用户列表
+    async function fetchUsers() {
+        try {
+            const res = await apiFetch('/api/users');
+            const data = await res.json();
+            return data.users || [];
+        } catch (err) {
+            console.error('获取用户列表失败:', err);
+            return [];
+        }
+    }
+
+    // 切换用户
+    async function switchUser(userId, { skipSave = false } = {}) {
+        try {
+            const res = await apiFetch('/api/switch_user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                // 更新当前上下文
+                currentUserId = data.user_id;
+                currentProjectId = data.project_id;
+                currentChatId = data.chat_id;
+                if (!skipSave) {
+                    saveCurrentContext();
+                }
+                // 更新用户显示
+                updateUserDisplay();
+                // 更新项目下拉框
+                await loadProjects(data.projects);
+                // 直接使用后端返回的当前项目状态
+                document.getElementById('project-overview').innerText = data.overview || '无项目描述';
+                // 直接使用后端返回的脚本列表
+                await loadScripts(data.scripts);
+                const scriptCount = (data.scripts || []).length;
+                document.getElementById('linked-script-count').innerText = `${scriptCount} 文件`;
+                document.getElementById('indexed-script-count').innerText = `${scriptCount} 文件`;
+                // 直接使用后端返回的会话列表
+                await loadChats(data.chats);
+                // 直接使用后端返回的当前会话消息
+                chatContainer.innerHTML = '';
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        if (msg.role === 'user') {
+                            addUserMessage(msg.message);
+                        } else if (msg.role === 'assistant') {
+                            addAssistantMessage(msg.message);
+                        }
+                    });
+                }
+            } else {
+                alert(`切换用户失败：${data.error}`);
+            }
+        } catch (err) {
+            console.error('切换用户出错:', err);
+            alert(`网络错误：${err.message}`);
+        }
+    }
+
+    // 更新顶部用户显示（头像下方文字）
+    function updateUserDisplay() {
+        const userNameElem = document.querySelector('#current-user h3');
+        const userRoleElem = document.querySelector('#current-user p');
+        if (userNameElem) userNameElem.innerText = currentUserId || '未登录';
+        if (userRoleElem) userRoleElem.innerText = '用户';
+    }
+
+    // ---------- 项目列表 & 切换 ----------
+    async function loadProjects(projects = null) {
+        try {
+            // 如果没有直接传入项目列表，才向后端请求
+            if (projects === null) {
+                const res = await apiFetch('/api/projects');
+                if (!res.ok) throw new Error('获取项目列表失败');
+
+                const data = await res.json();
+                projects = data.projects || [];
+            }
+
+            const select = document.getElementById('project-select');
+            if (!select) return;
+
+            select.innerHTML = '';
+
+            if (projects.length > 0) {
+                projects.forEach(proj => {
+                    const option = document.createElement('option');
+                    option.value = proj;
+                    option.textContent = proj;
+                    select.appendChild(option);
+                });
+
+                // 这里只负责更新下拉框，不自动切换项目
+                if (currentProjectId && projects.includes(currentProjectId)) {
+                    select.value = currentProjectId;
+                } else {
+                    select.value = projects[0];
+                }
+            } else {
+                const option = document.createElement('option');
+                option.textContent = '无项目，请创建';
+                select.appendChild(option);
+            }
+        } catch (err) {
+            console.error('加载项目列表失败:', err);
+        }
+    }
+
+    async function switchProject(projectId) {
+        // 切换项目时停止旧项目的轮询
+        stopSummaryPolling();
+        // 清空右侧面板，避免显示上一个项目的数据
+        const diffViewer = document.getElementById('diff-viewer');
+        if (diffViewer) {
+            diffViewer.innerHTML =
+                '<div class="p-4 text-on-surface-variant text-center">请选择一个脚本</div>';
+        }
+
+        const changeSummaryDiv = document.getElementById('change-summary');
+        if (changeSummaryDiv) {
+            changeSummaryDiv.innerHTML =
+                '<div class="text-on-surface-variant">暂无脚本说明</div>';
+        }
+
+        const affectedFilesDiv = document.getElementById('affected-files');
+        if (affectedFilesDiv) {
+            affectedFilesDiv.innerHTML =
+                '<span class="text-on-surface-variant">暂无依赖</span>';
+        }
+
+        try {
+            const res = await apiFetch('/api/switch_project', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ project_id: projectId })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                // 后端已经完成项目切换并确定当前聊天
+                currentProjectId = data.project_id;
+                currentChatId = data.chat_id;
+                saveCurrentContext();
+
+                // 更新项目下拉框
+                const select = document.getElementById('project-select');
+                if (select) {
+                    select.value = currentProjectId;
+                }
+
+                // 更新项目概览
+                document.getElementById('project-overview').innerText =
+                    data.overview || '无项目描述';
+
+                // 直接使用后端返回的脚本和会话列表
+                await loadScripts(data.scripts);
+                const scriptCount = (data.scripts || []).length;
+                document.getElementById('linked-script-count').innerText = `${scriptCount} 文件`;
+                document.getElementById('indexed-script-count').innerText = `${scriptCount} 文件`;
+                await loadChats(data.chats);
+
+                // 直接使用后端返回的当前会话消息
+                chatContainer.innerHTML = '';
+
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        if (msg.role === 'user') {
+                            addUserMessage(msg.message);
+                        } else if (msg.role === 'assistant') {
+                            addAssistantMessage(msg.message);
+                        }
+                    });
+
+                    scrollToBottom();
+                } else {
+                    addAssistantMessage(`会话 ${currentChatId} 暂无历史消息。`);
+                }
+
+                addAssistantMessage(`已切换到项目 ${currentProjectId}，当前会话：${currentChatId}`);
+
+                // 项目文档弹窗若开着，跟随项目切换刷新
+                if (projectDocsDialog?.open) {
+                    if (projectDocsProjectName) {
+                        projectDocsProjectName.innerText = currentProjectId;
+                    }
+                    resetProjectDocsDetailUI();
+                    await loadProjectDocuments();
+                }
+
+            } else {
+                console.error('切换项目失败', data.error);
+            }
+        } catch (err) {
+            console.error('切换项目出错:', err);
+        }
+    }
+
+    // ---------- 新建项目 ----------
+    async function createNewProject() {
+        const projectName = prompt("请输入新项目名称:", "MyNewProject");
+
+        if (!projectName || projectName.trim() === "") {
+            return;
+        }
+
+        try {
+            const res = await apiFetch('/api/new_project', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    project_name: projectName
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                // 后端已经完成项目创建并切换到新项目
+                currentProjectId = data.project_id;
+                currentChatId = data.chat_id;
+                saveCurrentContext();
+
+                // 更新项目下拉框
+                await loadProjects(data.projects);
+
+                const select = document.getElementById('project-select');
+                if (select) {
+                    select.value = currentProjectId;
+                }
+
+                // 更新项目概览
+                document.getElementById('project-overview').innerText =
+                    data.overview || '无项目描述';
+
+                // 直接使用后端返回的脚本和会话列表
+                await loadScripts(data.scripts);
+                const scriptCount = (data.scripts || []).length;
+                document.getElementById('linked-script-count').innerText = `${scriptCount} 文件`;
+                document.getElementById('indexed-script-count').innerText = `${scriptCount} 文件`;
+                await loadChats(data.chats);
+
+                // 新项目已经创建了新的 Chat
+                chatContainer.innerHTML = '';
+
+                addAssistantMessage(
+                    `项目 "${currentProjectId}" 已创建并切换。`
+                );
+
+            } else {
+                alert(`创建失败：${data.error}`);
+            }
+        } catch (err) {
+            console.error('创建项目出错:', err);
+            alert(`网络错误：${err.message}`);
+        }
+    }
+
+    // ---------- 删除项目 ----------
+    async function deleteProject() {
+        const projectId = currentProjectId;
+        if (!projectId) {
+            alert('当前没有项目');
+            return;
+        }
+
+        // 二次确认：要求输入项目名
+        const input = prompt(
+            `确定删除项目「${projectId}」吗？\n\n` +
+            `此操作将永久删除：\n` +
+            `- 所有脚本及历史版本\n` +
+            `- 所有文档及历史版本\n` +
+            `- 所有会话记录\n` +
+            `- 项目的向量索引\n\n` +
+            `请输入项目名以确认：`
+        );
+
+        if (input === null) return;   // 用户取消
+        if (input !== projectId) {
+            alert('项目名不匹配，已取消');
+            return;
+        }
+
+        try {
+            const res = await apiFetch(`/api/project/${encodeURIComponent(projectId)}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                throw new Error(data.error || '删除失败');
+            }
+
+            uploadStatusSpan.innerText = `已删除项目 ${projectId}`;
+            setTimeout(() => {
+                uploadStatusSpan.innerText = "系统就绪";
+            }, 3000);
+
+            // 更新项目下拉框
+            await loadProjects(data.projects);
+
+            // 情况 A：没有剩余项目 → 空状态
+            if (!data.project_id) {
+                currentProjectId = null;
+                currentChatId = null;
+                saveCurrentContext();
+
+                document.getElementById('project-overview').innerText = '无项目描述';
+                document.getElementById('linked-script-count').innerText = '0 文件';
+                document.getElementById('indexed-script-count').innerText = '0 文件';
+
+                // 脚本下拉
+                const scriptSelect = document.getElementById('script-select');
+                if (scriptSelect) {
+                    scriptSelect.innerHTML = '<option>暂无脚本</option>';
+                }
+                const diffViewer = document.getElementById('diff-viewer');
+                if (diffViewer) {
+                    diffViewer.innerHTML = '<div class="p-4 text-on-surface-variant text-center">请创建一个项目</div>';
+                }
+
+                // 会话列表
+                await loadChats([]);
+
+                // 聊天区
+                chatContainer.innerHTML = '';
+                addAssistantMessage('项目已删除。请点击左侧「项目」旁边的 + 创建新项目。');
+
+                await refreshProjectInfo();
+                return;
+            }
+
+            // 情况 B：有剩余项目 → 切到新项目
+            currentProjectId = data.project_id;
+            currentChatId = data.chat_id;
+            saveCurrentContext();
+
+            const select = document.getElementById('project-select');
+            if (select) select.value = currentProjectId;
+
+            document.getElementById('project-overview').innerText =
+                data.overview || '无项目描述';
+
+            await loadScripts(data.scripts);
+            const scriptCount = (data.scripts || []).length;
+            document.getElementById('linked-script-count').innerText = `${scriptCount} 文件`;
+            document.getElementById('indexed-script-count').innerText = `${scriptCount} 文件`;
+
+            await loadChats(data.chats);
+
+            chatContainer.innerHTML = '';
+            if (data.messages && data.messages.length > 0) {
+                data.messages.forEach(msg => {
+                    if (msg.role === 'user') addUserMessage(msg.message);
+                    else if (msg.role === 'assistant') addAssistantMessage(msg.message);
+                });
+            }
+            addAssistantMessage(`已切换到项目 ${currentProjectId}，当前会话：${currentChatId}`);
+
+            await refreshProjectInfo();
+
+        } catch (err) {
+            console.error('删除项目失败:', err);
+            alert(`删除失败：${err.message}`);
+        }
+    }
+
+    // ---------- 会话列表 & 切换 ----------
+    async function loadChats(chats = null) {
+        try {
+            if (chats === null) {
+                const res = await apiFetch('/api/chats');
+                const data = await res.json();
+                chats = data.chats || [];
+            }
+
+            const chatListDiv = document.querySelector('#sidebar .space-y-1');
+            if (!chatListDiv) return;
+
+            chatListDiv.innerHTML = '';
+
+            if (chats && chats.length > 0) {
+                const activeChatId = currentChatId;
+
+                chats.forEach(chat => {
+                    const chatDiv = document.createElement('div');
+
+                    let baseClasses =
+                        'flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50';
+
+                    if (chat.id === activeChatId) {
+                        baseClasses =
+                            'flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors bg-secondary-container/30 text-primary border-l-4 border-primary';
+                    }
+
+                    chatDiv.className = baseClasses + ' group';
+
+                    chatDiv.innerHTML = `
+                        <span class="material-symbols-outlined text-[20px] shrink-0">forum</span>
+                        <span class="font-body-md text-body-md truncate flex-1 min-w-0">${escapeHtml(chat.id)}</span>
+                        <button
+                            type="button"
+                            class="chat-delete-btn opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-error/20 hover:text-error text-on-surface-variant transition-all shrink-0"
+                            data-chat-id="${escapeHtml(chat.id)}"
+                            title="删除会话">
+                            <span class="material-symbols-outlined text-[16px]">close</span>
+                        </button>
+                    `;
+
+                    chatDiv.addEventListener('click', (e) => {
+                        const delBtn = e.target.closest('.chat-delete-btn');
+                        if (delBtn) {
+                            e.stopPropagation();
+                            const cid = delBtn.dataset.chatId;
+                            if (cid) deleteChat(cid);
+                            return;
+                        }
+                        switchChat(chat.id);
+                    });
+                    chatListDiv.appendChild(chatDiv);
+                });
+            } else {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'text-on-surface-variant text-center text-sm py-2';
+                emptyDiv.innerText = '暂无会话，点击上方 + 创建';
+                chatListDiv.appendChild(emptyDiv);
+            }
+        } catch (err) {
+            console.error('加载会话列表失败:', err);
+        }
+    }
+
+    async function switchChat(chatId) {
+        try {
+            const res = await apiFetch('/api/switch_chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                // 更新当前会话上下文
+                currentChatId = chatId;
+                saveCurrentContext();
+                chatContainer.innerHTML = '';
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        if (msg.role === 'user') addUserMessage(msg.message);
+                        else if (msg.role === 'assistant') addAssistantMessage(msg.message);
+                    });
+                    scrollToBottom();
+                } else {
+                    addAssistantMessage(`会话 ${chatId} 暂无历史消息。`);
+                }
+                // 高亮当前会话（不重新渲染整个列表，只改样式）
+                highlightCurrentChat(chatId);
+            } else {
+                console.error('切换会话失败', data.error);
+                addAssistantMessage(`切换会话失败：${data.error}`);
+            }
+        } catch (err) {
+            console.error('切换会话出错:', err);
+            addAssistantMessage(`网络错误：${err.message}`);
+        }
+    }
+
+    // ---------- 删除会话 ----------
+    async function deleteChat(chatId) {
+        if (!confirm(`确定删除会话「${chatId}」吗？\n（会话历史将被永久删除）`)) {
+            return;
+        }
+
+        try {
+            const res = await apiFetch(`/api/chat/${encodeURIComponent(chatId)}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                throw new Error(data.error || '删除失败');
+            }
+
+            uploadStatusSpan.innerText = `已删除会话 ${chatId}`;
+            setTimeout(() => {
+                uploadStatusSpan.innerText = "系统就绪";
+            }, 3000);
+
+            // 如果删除时切换了当前会话，要刷新聊天区
+            if (data.current_chat_id !== currentChatId) {
+                currentChatId = data.current_chat_id;
+                saveCurrentContext();
+
+                chatContainer.innerHTML = '';
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        if (msg.role === 'user') addUserMessage(msg.message);
+                        else if (msg.role === 'assistant') addAssistantMessage(msg.message);
+                    });
+                    scrollToBottom();
+                } else {
+                    addAssistantMessage(`会话 ${currentChatId} 暂无历史消息。`);
+                }
+            }
+
+            // 刷新会话列表
+            await loadChats(data.chats);
+
+        } catch (err) {
+            console.error('删除会话失败:', err);
+            alert(`删除失败：${err.message}`);
+        }
+    }
+
+    async function newChat() {
+        try {
+            const res = await apiFetch('/api/new_chat', { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                // 新建会话后立即成为当前会话
+                currentChatId = data.chat_id;
+                saveCurrentContext();
+                chatContainer.innerHTML = '';
+                addAssistantMessage(`新会话已创建 (ID: ${data.chat_id})。`);
+                await loadChats(data.chats);
+            } else {
+                console.error('新建会话失败', data.error);
+            }
+        } catch (err) {
+            console.error('新建会话出错:', err);
+        }
+    }
+
+    // ---------- 脚本列表 & 版本 ----------
+    async function loadScripts(scripts = null, { keepSelection = false } = {}) {
+        try {
+            if (scripts === null) {
+                const res = await apiFetch('/api/scripts');
+                if (!res.ok) throw new Error('获取脚本列表失败');
+
+                const data = await res.json();
+                scripts = data.scripts || [];
+            }
+
+            const select = document.getElementById('script-select');
+            if (!select) return;
+
+            const previousSelected = select.value;
+            select.innerHTML = '';
+
+            if (scripts.length > 0) {
+                scripts.forEach(script => {
+                    const option = document.createElement('option');
+                    option.value = script;
+                    option.textContent = script;
+                    select.appendChild(option);
+                });
+
+                let targetScript;
+                if (keepSelection && previousSelected && scripts.includes(previousSelected)) {
+                    // 尽量保持用户当前正在看的脚本
+                    targetScript = previousSelected;
+                } else {
+                    // 否则选中最新生成的（列表末尾）
+                    targetScript = scripts[scripts.length - 1];
+                }
+                select.value = targetScript;
+                await loadScriptDetail(targetScript);
+            } else {
+                const option = document.createElement('option');
+                option.textContent = '暂无脚本';
+                select.appendChild(option);
+
+                const versionSelect = document.getElementById('version-select');
+                if (versionSelect) {
+                    versionSelect.innerHTML = '<option value="">无版本历史</option>';
+                }
+
+                const currentScriptName = document.getElementById('current-script-name');
+                if (currentScriptName) {
+                    currentScriptName.value = '';
+                }
+
+                // 清空右侧面板
+                const diffViewer = document.getElementById('diff-viewer');
+                if (diffViewer) {
+                    diffViewer.innerHTML =
+                        '<div class="p-4 text-on-surface-variant text-center">暂无脚本</div>';
+                }
+
+                const changeSummaryDiv = document.getElementById('change-summary');
+                if (changeSummaryDiv) {
+                    changeSummaryDiv.innerHTML =
+                        '<div class="text-on-surface-variant">暂无脚本说明</div>';
+                }
+
+                const affectedFilesDiv = document.getElementById('affected-files');
+                if (affectedFilesDiv) {
+                    affectedFilesDiv.innerHTML =
+                        '<span class="text-on-surface-variant">暂无依赖</span>';
+                }
+            }
+        } catch (err) {
+            console.error('加载脚本列表失败:', err);
+        }
+    }
+
+    async function loadScriptDetail(filename) {
+        // 切换脚本时先停止旧的轮询
+        stopSummaryPolling();
+        // 先清空右侧面板，显示加载中
+        const diffViewer = document.getElementById('diff-viewer');
+        if (diffViewer) diffViewer.innerHTML = '<div class="p-4 text-on-surface-variant text-center">加载中...</div>';
+        const changeSummaryDiv = document.getElementById('change-summary');
+        if (changeSummaryDiv) changeSummaryDiv.innerHTML = '<div class="text-on-surface-variant">加载中...</div>';
+        const affectedFilesDiv = document.getElementById('affected-files');
+        if (affectedFilesDiv) affectedFilesDiv.innerHTML = '<span class="text-on-surface-variant">加载中...</span>';
+
+        try {
+            const res = await apiFetch(`/api/script/${filename}`);
+            if (!res.ok) throw new Error('获取脚本详情失败');
+            const data = await res.json();
+
+            // 更新 diff-viewer 显示代码
+            if (diffViewer) {
+                if (data.code && data.code.trim()) {
+                    diffViewer.innerHTML = `<pre class="p-4 font-code-block text-code-block text-on-surface overflow-x-auto">${escapeHtml(data.code)}</pre>`;
+                } else {
+                    diffViewer.innerHTML = `
+                        <div class="p-4 text-on-surface-variant text-center">
+                            脚本内容为空
+                        </div>
+                    `;
+                }
+            }
+
+            // 更新脚本说明区域
+            if (changeSummaryDiv) {
+                const summaryText = data.summary || '暂无脚本说明信息';
+                changeSummaryDiv.innerHTML = `<div class="font-body-md text-body-md text-on-surface">${escapeHtml(summaryText).replace(/\n/g, '<br>')}</div>`;
+            }
+
+            // 如果summary正在后台生成，启动轮询
+            if (isSummaryPending(data)) {
+                startSummaryPolling(filename);
+            }
+
+            // 更新依赖的脚本区域
+            if (affectedFilesDiv) {
+                let dependencies = data.dependencies || [];
+                let depFiles = [];
+                dependencies.forEach(dep => {
+                    if (typeof dep === 'string') depFiles.push(dep);
+                    else if (dep.file) depFiles.push(dep.file);
+                });
+                depFiles = [...new Set(depFiles)];
+                if (depFiles.length > 0) {
+                    affectedFilesDiv.innerHTML = depFiles.map(file => `
+                        <span class="px-2 py-0.5 bg-surface-container-highest rounded text-label-sm text-on-surface border border-outline-variant">
+                            ${escapeHtml(file)}
+                        </span>
+                    `).join('');
+                } else {
+                    affectedFilesDiv.innerHTML = '<span class="text-on-surface-variant">无依赖</span>';
+                }
+            }
+
+            // 更新版本下拉框
+            const versionSelect = document.getElementById('version-select');
+            if (versionSelect && data.versions && data.versions.length > 0) {
+                versionSelect.innerHTML = '';
+                data.versions.forEach(ver => {
+                    const option = document.createElement('option');
+                    option.value = ver;
+                    option.textContent = ver;
+                    versionSelect.appendChild(option);
+                });
+                const latestOption = document.createElement('option');
+                latestOption.value = 'latest';
+                latestOption.textContent = '最新版本 (当前)';
+                versionSelect.appendChild(latestOption);
+                versionSelect.value = 'latest';
+            } else if (versionSelect) {
+                versionSelect.innerHTML = '<option value="">无版本历史</option>';
+            }
+        } catch (err) {
+            console.error('加载脚本详情失败:', err);
+            if (diffViewer) diffViewer.innerHTML = '<div class="p-4 text-error text-center">加载失败</div>';
+            if (changeSummaryDiv) changeSummaryDiv.innerHTML = '<div class="text-error">加载失败</div>';
+            if (affectedFilesDiv) affectedFilesDiv.innerHTML = '<span class="text-error">加载失败</span>';
+        }
+    }
+
+    // ---------- 删除脚本 ----------
+    async function deleteScript() {
+        const select = document.getElementById('script-select');
+        const filename = select?.value;
+
+        if (!filename || filename === '暂无脚本') {
+            alert('当前没有可删除的脚本');
+            return;
+        }
+
+        if (!confirm(`确定删除脚本「${filename}」吗？\n（历史版本、向量索引、依赖记录都会一起删除）`)) {
+            return;
+        }
+
+        // 先停轮询，避免删除后还一直请求
+        stopSummaryPolling();
+
+        try {
+            const res = await apiFetch(`/api/script/${encodeURIComponent(filename)}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                throw new Error(data.error || '删除失败');
+            }
+
+            uploadStatusSpan.innerText = `已删除 ${filename}`;
+            setTimeout(() => {
+                uploadStatusSpan.innerText = "系统就绪";
+            }, 3000);
+
+            // 刷新脚本列表（会自动选中第一个或显示"暂无脚本"）
+            await loadScripts(null);
+
+            // 刷新左侧 Memory 卡片
+            await refreshProjectInfo();
+
+        } catch (err) {
+            console.error('删除脚本失败:', err);
+            alert(`删除失败：${err.message}`);
+        }
+    }
+
+    async function loadVersion() {
+        const filename = document.getElementById('script-select').value;
+        const versionName = document.getElementById('version-select').value;
+        if (!filename) return;
+
+        const diffViewer = document.getElementById('diff-viewer');
+        if (diffViewer) diffViewer.innerHTML = '<div class="p-4 text-on-surface-variant text-center">加载中...</div>';
+
+        if (versionName === 'latest') {
+            await loadScriptDetail(filename);
+            return;
+        }
+        try {
+            const res = await apiFetch(`/api/script/${filename}/version/${versionName}`);
+            if (!res.ok) throw new Error('获取版本失败');
+            const data = await res.json();
+            if (diffViewer) {
+                diffViewer.innerHTML = `<pre class="p-4 font-code-block text-code-block text-on-surface overflow-x-auto">${escapeHtml(data.code)}</pre>`;
+            }
+        } catch (err) {
+            console.error('加载版本失败:', err);
+            if (diffViewer) diffViewer.innerHTML = '<div class="p-4 text-error text-center">加载失败</div>';
+        }
+    }
+
+    // ---------- 项目文档列表 ----------
+    async function loadProjectDocuments() {
+        if (!currentUserId || !currentProjectId) {
+            projectDocuments = [];
+            if (projectDocsList) {
+                projectDocsList.innerHTML = `
+                    <div class="project-doc-empty">
+                        当前没有设置用户或项目
+                    </div>
+                `;
+            }
+
+            if (projectDocsCount) {
+                projectDocsCount.innerText = '0 个';
+            }
+            return;
+        }
+
+        if (projectDocsList) {
+            projectDocsList.innerHTML = `
+                <div class="project-doc-empty">
+                    正在加载文档...
+                </div>
+            `;
+        }
+
+        try {
+            const res = await apiFetch('/api/documents');
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
+            }
+
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.error || '获取项目文档失败');
+            }
+
+            projectDocuments = data.documents || [];
+            if (projectDocsProjectName) {
+                projectDocsProjectName.innerText = currentProjectId;
+            }
+            renderProjectDocuments();
+
+        } catch (err) {
+            console.error('加载项目文档失败:', err);
+            projectDocuments = [];
+            if (projectDocsList) {
+                projectDocsList.innerHTML = `
+                    <div class="project-doc-empty text-error">
+                        加载项目文档失败
+                    </div>
+                `;
+            }
+            if (projectDocsCount) {
+                projectDocsCount.innerText = '0 个';
+            }
+        }
+    }
+
+    // 重置右侧文档详情区域（不影响左侧列表）
+    function resetProjectDocsDetailUI() {
+        currentProjectDocument = null;
+
+        if (projectDocDetailTitle) {
+            projectDocDetailTitle.innerText = '未选择文档';
+        }
+
+        if (projectDocDetailStatus) {
+            projectDocDetailStatus.innerText = '选择左侧文档查看内容';
+        }
+
+        // 版本选择器隐藏 + 清空
+        if (projectDocVersionWrapper) {
+            projectDocVersionWrapper.classList.add('hidden');
+        }
+        if (projectDocVersionSelect) {
+            projectDocVersionSelect.innerHTML = '';
+        }
+
+        if (projectDocDetailContent) {
+            projectDocDetailContent.innerHTML = `
+                <div class="project-doc-empty h-full">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-[56px] opacity-30">
+                            description
+                        </span>
+
+                        <p class="mt-3 font-body-md text-body-md">
+                            选择左侧文档查看内容
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // 根据后端返回的 versions 数组，更新版本下拉框
+    function updateProjectDocVersionSelect(versions) {
+        if (!projectDocVersionWrapper || !projectDocVersionSelect) return;
+
+        projectDocVersionSelect.innerHTML = '';
+
+        // 没有历史版本 → 隐藏
+        if (!versions || versions.length === 0) {
+            projectDocVersionWrapper.classList.add('hidden');
+            return;
+        }
+
+        // 有历史版本 → 显示
+        projectDocVersionWrapper.classList.remove('hidden');
+
+        // 第一项：当前版本
+        const currentOption = document.createElement('option');
+        currentOption.value = 'latest';
+        currentOption.textContent = '当前版本';
+        projectDocVersionSelect.appendChild(currentOption);
+
+        // 后面：历史版本
+        versions.forEach(ver => {
+            const option = document.createElement('option');
+            option.value = ver;
+            option.textContent = ver;
+            projectDocVersionSelect.appendChild(option);
+        });
+
+        projectDocVersionSelect.value = 'latest';
+    }
+
+    // ---------- 项目文档内容查看 ----------
+    async function loadProjectDocumentDetail(filename) {
+        if (!filename) {
+            return;
+        }
+
+        currentProjectDocument = filename;
+
+        // 切换文档时先隐藏旧版本下拉框
+        if (projectDocVersionWrapper) {
+            projectDocVersionWrapper.classList.add('hidden');
+        }
+        if (projectDocVersionSelect) {
+            projectDocVersionSelect.innerHTML = '';
+        }
+
+        // 更新右侧标题
+        if (projectDocDetailTitle) {
+            projectDocDetailTitle.innerText = filename;
+        }
+
+        if (projectDocDetailStatus) {
+            projectDocDetailStatus.innerText = '正在加载文档...';
+        }
+
+        if (projectDocDetailContent) {
+            projectDocDetailContent.innerHTML = `
+                <div class="project-doc-empty h-full">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-[40px] animate-pulse opacity-50">
+                            progress_activity
+                        </span>
+
+                        <p class="mt-3 font-body-md text-body-md">
+                            正在加载文档...
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        try {
+            const res = await apiFetch(
+                `/api/document/${encodeURIComponent(filename)}`
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+            }
+
+            if (!data.success) {
+                throw new Error(data.error || '获取文档内容失败');
+            }
+
+            if (projectDocDetailStatus) {
+                projectDocDetailStatus.innerText = '当前文档';
+            }
+
+            // 有历史版本才显示版本下拉框
+            updateProjectDocVersionSelect(data.versions || []);
+
+            document
+                .querySelectorAll('.project-doc-item')
+                .forEach(item => {
+                    item.classList.toggle(
+                        'active',
+                        item.dataset.filename === filename
+                    );
+                });
+
+            if (projectDocDetailContent) {
+                projectDocDetailContent.innerHTML = `
+                    <pre class="whitespace-pre-wrap break-words font-body-md text-body-md text-on-surface leading-relaxed">${escapeHtml(data.content || '')}</pre>
+                `;
+            }
+
+        } catch (err) {
+            console.error('加载项目文档内容失败:', err);
+
+            if (projectDocDetailStatus) {
+                projectDocDetailStatus.innerText = '加载失败';
+            }
+
+            if (projectDocDetailContent) {
+                projectDocDetailContent.innerHTML = `
+                    <div class="project-doc-empty h-full text-error">
+                        <div class="text-center">
+                            <span class="material-symbols-outlined text-[48px]">
+                                error
+                            </span>
+
+                            <p class="mt-3 font-body-md text-body-md">
+                                文档内容加载失败
+                            </p>
+
+                            <p class="mt-1 font-label-sm text-label-sm text-on-surface-variant">
+                                ${escapeHtml(err.message)}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    // ---------- 删除项目文档 ----------
+    async function deleteProjectDocument(filename) {
+        if (!confirm(`确定删除文档「${filename}」吗？\n（会同时删除它的所有历史版本和向量索引）`)) {
+            return;
+        }
+
+        try {
+            const res = await apiFetch(`/api/document/${encodeURIComponent(filename)}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                throw new Error(data.error || '删除失败');
+            }
+
+            uploadStatusSpan.innerText = `已删除 ${filename}`;
+            setTimeout(() => {
+                uploadStatusSpan.innerText = "系统就绪";
+            }, 3000);
+
+            // 如果当前正看着这个文档，清空右侧
+            if (currentProjectDocument === filename) {
+                resetProjectDocsDetailUI();
+            }
+
+            // 刷新列表
+            await loadProjectDocuments();
+
+        } catch (err) {
+            console.error('删除文档失败:', err);
+            alert(`删除失败：${err.message}`);
+        }
+    }
+
+    // ---------- 项目文档历史版本 ----------
+    async function loadProjectDocumentVersion(filename, versionName) {
+        if (!filename || !versionName) return;
+
+        // 切回当前版本：直接走原函数
+        if (versionName === 'latest') {
+            await loadProjectDocumentDetail(filename);
+            return;
+        }
+
+        if (projectDocDetailStatus) {
+            projectDocDetailStatus.innerText = `正在加载历史版本 ${versionName}...`;
+        }
+
+        if (projectDocDetailContent) {
+            projectDocDetailContent.innerHTML = `
+                <div class="project-doc-empty h-full">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-[40px] animate-pulse opacity-50">
+                            progress_activity
+                        </span>
+                        <p class="mt-3 font-body-md text-body-md">正在加载文档...</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        try {
+            const res = await apiFetch(
+                `/api/document/${encodeURIComponent(filename)}/version/${encodeURIComponent(versionName)}`
+            );
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+            }
+            if (!data.success) {
+                throw new Error(data.error || '获取历史版本失败');
+            }
+
+            if (projectDocDetailStatus) {
+                projectDocDetailStatus.innerText = `历史版本：${versionName}`;
+            }
+
+            if (projectDocDetailContent) {
+                projectDocDetailContent.innerHTML = `
+                    <pre class="whitespace-pre-wrap break-words font-body-md text-body-md text-on-surface leading-relaxed">${escapeHtml(data.content || '')}</pre>
+                `;
+            }
+        } catch (err) {
+            console.error('加载历史版本文档失败:', err);
+
+            if (projectDocDetailStatus) {
+                projectDocDetailStatus.innerText = '加载失败';
+            }
+
+            if (projectDocDetailContent) {
+                projectDocDetailContent.innerHTML = `
+                    <div class="project-doc-empty h-full text-error">
+                        <div class="text-center">
+                            <span class="material-symbols-outlined text-[48px]">error</span>
+                            <p class="mt-3 font-body-md text-body-md">历史版本加载失败</p>
+                            <p class="mt-1 font-label-sm text-label-sm text-on-surface-variant">
+                                ${escapeHtml(err.message)}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    function renderProjectDocuments() {
+        if (!projectDocsList) return;
+
+        const keyword = (projectDocsSearch?.value || '').trim().toLowerCase();
+
+        const filteredDocuments = projectDocuments.filter(filename =>
+            filename.toLowerCase().includes(keyword)
+        );
+
+        if (projectDocsCount) {
+            projectDocsCount.innerText = `${filteredDocuments.length} 个`;
+        }
+
+        if (filteredDocuments.length === 0) {
+            projectDocsList.innerHTML = `
+                <div class="project-doc-empty">
+                    ${
+                        keyword
+                            ? '没有找到匹配的项目文档'
+                            : '当前项目暂无文档'
+                    }
+                </div>
+            `;
+            return;
+        }
+
+        projectDocsList.innerHTML = filteredDocuments.map(filename => `
+            <div class="project-doc-item group" data-filename="${escapeHtml(filename)}" title="${escapeHtml(filename)}">
+                <span class="material-symbols-outlined text-[20px] text-primary shrink-0">
+                    description
+                </span>
+
+                <span class="font-body-md text-body-md truncate flex-1 min-w-0">
+                    ${escapeHtml(filename)}
+                </span>
+
+                <button
+                    type="button"
+                    class="project-doc-delete-btn opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-error/20 hover:text-error text-on-surface-variant transition-all shrink-0"
+                    data-delete-filename="${escapeHtml(filename)}"
+                    title="删除文档">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    // ---------- 项目文档弹窗 ----------
+    async function openProjectDocsDialog() {
+        if (!projectDocsDialog) return;
+
+        if (!currentProjectId) {
+            alert('请先选择一个项目');
+            return;
+        }
+
+        if (projectDocsSearch) {
+            projectDocsSearch.value = '';
+        }
+
+        if (projectDocsProjectName) {
+            projectDocsProjectName.innerText = currentProjectId;
+        }
+
+        resetProjectDocsDetailUI();
+
+        projectDocsDialog.showModal();
+
+        await loadProjectDocuments();
+    }
+
+    function closeProjectDocsDialog() {
+        if (projectDocsDialog?.open) {
+            projectDocsDialog.close();
+        }
+    }
+
+    // ---------- 项目文档上传 ----------
+    async function uploadDocs(files) {
+        if (!files || files.length === 0) {
+            return;
+        }
+
+        const formData = new FormData();
+        for (const file of files) {
+            formData.append('files', file);
+        }
+
+        uploadStatusSpan.innerText = `正在上传并索引 ${files.length} 个文档...`;
+
+        try {
+            const res = await apiFetch('/api/upload_docs', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || `HTTP ${res.status}`);
+            }
+
+            if (data.success) {
+                const successCount = (data.files || []).filter(
+                    item => item.success
+                ).length;
+
+                const failedCount = (data.files || []).filter(
+                    item => !item.success
+                ).length;
+
+                if (failedCount === 0) {
+                    uploadStatusSpan.innerText =
+                        `已上传并索引 ${successCount} 个文档`;
+                } else {
+                    uploadStatusSpan.innerText =
+                        `完成：${successCount} 个成功，${failedCount} 个失败`;
+                }
+
+                if (projectDocsDialog?.open) {
+                    loadProjectDocuments();
+                }
+
+                setTimeout(() => {
+                    uploadStatusSpan.innerText = "系统就绪";
+                }, 3000);
+            } else {
+                uploadStatusSpan.innerText =
+                    "上传失败: " + (data.error || "未知错误");
+            }
+        } catch (err) {
+            uploadStatusSpan.innerText = "上传出错";
+            console.error('上传文档失败:', err);
+        }
+    }
+
+    // ---------- 轮询 summary 状态 ----------
+    let summaryPollTimer = null;
+    let summaryPollCount = 0;
+    let summaryPollFilename = null;
+    const SUMMARY_POLL_INTERVAL = 5000;   // 每 5 秒
+    const SUMMARY_POLL_MAX = 24;          // 最多轮询 24 次（2 分钟）
+
+    // 判断 summary 是否正在生成（优先用后端的 summary_done）
+    function isSummaryPending(data) {
+        // 后端的 summary_done 明确说"没完成" → 正在生成
+        if (typeof data === 'object' && data !== null) {
+            if (data.summary_done === false) return true;
+            if (data.summary_done === true) return false;
+            // 没这个字段时降级到字符串匹配
+            return isSummaryPendingString(data.summary);
+        }
+        // 兼容老调用方式（传字符串）
+        return isSummaryPendingString(data);
+    }
+
+    function isSummaryPendingString(summary) {
+        if (!summary || typeof summary !== 'string') return false;
+        return summary.includes('正在后台生成') || summary.includes('生成中');
+    }
+
+    function stopSummaryPolling() {
+        if (summaryPollTimer) {
+            clearTimeout(summaryPollTimer);
+            summaryPollTimer = null;
+        }
+        summaryPollCount = 0;
+        summaryPollFilename = null;
+    }
+
+    function startSummaryPolling(filename) {
+        stopSummaryPolling();
+        summaryPollFilename = filename;
+
+        const poll = async () => {
+            if (!summaryPollFilename || summaryPollCount >= SUMMARY_POLL_MAX) {
+                stopSummaryPolling();
+                return;
+            }
+            summaryPollCount++;
+
+            try {
+                const res = await apiFetch(`/api/script/${encodeURIComponent(summaryPollFilename)}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+
+                // 只有当前还看着这个脚本，才更新 UI
+                const select = document.getElementById('script-select');
+                const isCurrent = select && select.value === summaryPollFilename;
+
+                if (isCurrent) {
+                    const changeSummaryDiv = document.getElementById('change-summary');
+                    if (changeSummaryDiv) {
+                        const summaryText = data.summary || '暂无摘要信息';
+                        changeSummaryDiv.innerHTML = `<div class="font-body-md text-body-md text-on-surface">${escapeHtml(summaryText).replace(/\n/g, '<br>')}</div>`;
+                    }
+
+                    const affectedFilesDiv = document.getElementById('affected-files');
+                    if (affectedFilesDiv) {
+                        let dependencies = data.dependencies || [];
+                        let depFiles = [];
+                        dependencies.forEach(dep => {
+                            if (typeof dep === 'string') depFiles.push(dep);
+                            else if (dep.file) depFiles.push(dep.file);
+                        });
+                        depFiles = [...new Set(depFiles)];
+                        if (depFiles.length > 0) {
+                            affectedFilesDiv.innerHTML = depFiles.map(file => `
+                                <span class="px-2 py-0.5 bg-surface-container-highest rounded text-label-sm text-on-surface border border-outline-variant">
+                                    ${escapeHtml(file)}
+                                </span>
+                            `).join('');
+                        } else {
+                            affectedFilesDiv.innerHTML = '<span class="text-on-surface-variant">无依赖</span>';
+                        }
+                    }
+                }
+
+                // 还在生成中 → 继续；否则停止
+                if (isSummaryPending(data)) {
+                    summaryPollTimer = setTimeout(poll, SUMMARY_POLL_INTERVAL);
+                } else {
+                    stopSummaryPolling();
+                }
+            } catch (err) {
+                console.error('轮询 summary 失败:', err);
+
+                // ★ 脚本已删除 / 不存在 → 停掉，不再重试
+                const msg = String(err.message || '');
+                if (msg.includes('脚本不存在') || msg.includes('HTTP 4')) {
+                    stopSummaryPolling();
+                    return;
+                }
+
+                // 其他错误（网络抖动等）→ 继续重试
+                summaryPollTimer = setTimeout(poll, SUMMARY_POLL_INTERVAL);
+            }
+        };
+
+        // 延迟 5 秒再开始，避免后端还没启动后台线程
+        summaryPollTimer = setTimeout(poll, SUMMARY_POLL_INTERVAL);
+    }
+
+    // ---------- 清空输入框 ----------
+    function clearInput() {
+        userInput.value = '';
+        userInput.style.height = 'auto';
+        userInput.focus();
+    }
+
+        // ---------- 全局文档列表 ----------
+    async function loadGlobalDocuments() {
+        if (globalDocsList) {
+            globalDocsList.innerHTML = `<div class="project-doc-empty">正在加载文档...</div>`;
+        }
+        try {
+            const res = await apiFetch('/api/global_documents');
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || '获取全局文档失败');
+            globalDocuments = data.documents || [];
+            renderGlobalDocuments();
+        } catch (err) {
+            console.error('加载全局文档失败:', err);
+            globalDocuments = [];
+            if (globalDocsList) {
+                globalDocsList.innerHTML = `<div class="project-doc-empty text-error">加载全局文档失败</div>`;
+            }
+            if (globalDocsCount) globalDocsCount.innerText = '0 个';
+        }
+    }
+
+    function renderGlobalDocuments() {
+        if (!globalDocsList) return;
+        const keyword = (globalDocsSearch?.value || '').trim().toLowerCase();
+        const filtered = globalDocuments.filter(f => f.toLowerCase().includes(keyword));
+        if (globalDocsCount) globalDocsCount.innerText = `${filtered.length} 个`;
+
+        if (filtered.length === 0) {
+            globalDocsList.innerHTML = `
+                <div class="project-doc-empty">
+                    ${keyword ? '没有找到匹配的文档' : '暂无全局文档'}
+                </div>
+            `;
+            return;
+        }
+
+        globalDocsList.innerHTML = filtered.map(filename => `
+            <div class="project-doc-item group" data-filename="${escapeHtml(filename)}" title="${escapeHtml(filename)}">
+                <span class="material-symbols-outlined text-[20px] text-primary shrink-0">description</span>
+                <span class="font-body-md text-body-md truncate flex-1 min-w-0">${escapeHtml(filename)}</span>
+                <button
+                    type="button"
+                    class="project-doc-delete-btn opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-error/20 hover:text-error text-on-surface-variant transition-all shrink-0"
+                    data-delete-filename="${escapeHtml(filename)}"
+                    title="删除文档">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function resetGlobalDocsDetailUI() {
+        currentGlobalDocument = null;
+        if (globalDocDetailTitle) globalDocDetailTitle.innerText = '未选择文档';
+        if (globalDocDetailStatus) globalDocDetailStatus.innerText = '选择左侧文档查看内容';
+        if (globalDocDetailContent) {
+            globalDocDetailContent.innerHTML = `
+                <div class="project-doc-empty h-full">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-[56px] opacity-30">description</span>
+                        <p class="mt-3 font-body-md text-body-md">选择左侧文档查看内容</p>
+                    </div>
+                </div>
+            `;
+        }
+        document.querySelectorAll('#global-docs-list .project-doc-item').forEach(item => {
+            item.classList.remove('active');
+        });
+    }
+
+    async function loadGlobalDocumentDetail(filename) {
+        if (!filename) return;
+        currentGlobalDocument = filename;
+
+        if (globalDocDetailTitle) globalDocDetailTitle.innerText = filename;
+        if (globalDocDetailStatus) globalDocDetailStatus.innerText = '正在加载文档...';
+        if (globalDocDetailContent) {
+            globalDocDetailContent.innerHTML = `
+                <div class="project-doc-empty h-full">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-[40px] animate-pulse opacity-50">progress_activity</span>
+                        <p class="mt-3 font-body-md text-body-md">正在加载文档...</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        try {
+            const res = await apiFetch(`/api/global_document/${encodeURIComponent(filename)}`);
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+            if (!data.success) throw new Error(data.error || '获取文档内容失败');
+
+            if (globalDocDetailStatus) globalDocDetailStatus.innerText = '当前文档';
+            document.querySelectorAll('#global-docs-list .project-doc-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.filename === filename);
+            });
+            if (globalDocDetailContent) {
+                globalDocDetailContent.innerHTML = `
+                    <pre class="whitespace-pre-wrap break-words font-body-md text-body-md text-on-surface leading-relaxed">${escapeHtml(data.content || '')}</pre>
+                `;
+            }
+        } catch (err) {
+            console.error('加载全局文档内容失败:', err);
+            if (globalDocDetailStatus) globalDocDetailStatus.innerText = '加载失败';
+            if (globalDocDetailContent) {
+                globalDocDetailContent.innerHTML = `
+                    <div class="project-doc-empty h-full text-error">
+                        <div class="text-center">
+                            <span class="material-symbols-outlined text-[48px]">error</span>
+                            <p class="mt-3 font-body-md text-body-md">文档内容加载失败</p>
+                            <p class="mt-1 font-label-sm text-label-sm text-on-surface-variant">${escapeHtml(err.message)}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    // ---------- 删除全局文档 ----------
+    async function deleteGlobalDocument(filename) {
+        if (!confirm(`确定删除全局文档「${filename}」吗？\n（会同时删除它的向量索引，其他项目将无法再检索到）`)) {
+            return;
+        }
+
+        try {
+            const res = await apiFetch(`/api/global_document/${encodeURIComponent(filename)}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                throw new Error(data.error || '删除失败');
+            }
+
+            uploadStatusSpan.innerText = `已删除 ${filename}`;
+            setTimeout(() => {
+                uploadStatusSpan.innerText = "系统就绪";
+            }, 3000);
+
+            if (currentGlobalDocument === filename) {
+                resetGlobalDocsDetailUI();
+            }
+
+            await loadGlobalDocuments();
+
+        } catch (err) {
+            console.error('删除全局文档失败:', err);
+            alert(`删除失败：${err.message}`);
+        }
+    }
+
+    async function uploadGlobalDocs(files) {
+        if (!files || files.length === 0) return;
+
+        const formData = new FormData();
+        for (const file of files) {
+            formData.append('files', file);
+        }
+
+        uploadStatusSpan.innerText = `正在上传并索引 ${files.length} 个全局文档...`;
+
+        try {
+            const res = await apiFetch('/api/upload_global_docs', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+            if (!data.success) throw new Error(data.error || '上传失败');
+
+            // ⚠️ 这个接口返回的是 results，不是 files
+            const results = data.results || [];
+            const successCount = results.filter(r => r.success).length;
+            const failedCount = results.filter(r => !r.success).length;
+
+            if (failedCount === 0) {
+                uploadStatusSpan.innerText = `已上传并索引 ${successCount} 个全局文档`;
+            } else {
+                uploadStatusSpan.innerText = `完成：${successCount} 个成功，${failedCount} 个失败`;
+            }
+
+            if (globalDocsDialog?.open) {
+                await loadGlobalDocuments();
+            }
+
+            setTimeout(() => {
+                uploadStatusSpan.innerText = "系统就绪";
+            }, 3000);
+        } catch (err) {
+            uploadStatusSpan.innerText = "上传出错";
+            console.error('上传全局文档失败:', err);
+        }
+    }
+
+    async function openGlobalDocsDialog() {
+        if (!globalDocsDialog) return;
+        if (globalDocsSearch) globalDocsSearch.value = '';
+
+        // 按权限控制上传按钮
+        const isAdmin = localStorage.getItem("isAdmin") === "1";
+        if (globalDocsUploadBtn) {
+            if (isAdmin) {
+                globalDocsUploadBtn.classList.remove('hidden');
+            } else {
+                globalDocsUploadBtn.classList.add('hidden');
+            }
+        }
+
+        resetGlobalDocsDetailUI();
+        globalDocsDialog.showModal();
+        await loadGlobalDocuments();
+    }
+
+    function closeGlobalDocsDialog() {
+        if (globalDocsDialog?.open) globalDocsDialog.close();
+    }
+
+    // ---------- 事件绑定 ----------
+    sendBtn.addEventListener('click', sendMessage);
+    refreshBtn.addEventListener('click', refreshProjectInfo);
+    clearBtn.addEventListener('click', clearInput);
+    deleteScriptBtn?.addEventListener('click', deleteScript);
+    document.getElementById('new-chat-btn')?.addEventListener('click', newChat);
+    document.getElementById('load-version-btn')?.addEventListener('click', loadVersion);
+    document.getElementById('script-select')?.addEventListener('change', (e) => loadScriptDetail(e.target.value));
+    document.getElementById('project-select')?.addEventListener('change', (e) => {switchProject(e.target.value);});
+    document.getElementById('new-project-btn')?.addEventListener('click', createNewProject);
+    document.getElementById('chat-attach-btn')?.addEventListener('click', () => {hiddenFileInput.click();});
+    document.getElementById('delete-project-btn')?.addEventListener('click', deleteProject);
+    // 项目文档
+    projectDocsBtn?.addEventListener('click', openProjectDocsDialog);
+    projectDocsCloseBtn?.addEventListener('click', closeProjectDocsDialog);
+    projectDocsRefreshBtn?.addEventListener('click', loadProjectDocuments);
+    projectDocsSearch?.addEventListener('input', renderProjectDocuments);
+    projectDocsList?.addEventListener('click', async (e) => {
+        // 先判断是不是点到了删除按钮
+        const deleteBtn = e.target.closest('.project-doc-delete-btn');
+        if (deleteBtn) {
+            e.stopPropagation();
+            const filename = deleteBtn.dataset.deleteFilename;
+            if (filename) {
+                await deleteProjectDocument(filename);
+            }
+            return;
+        }
+
+        // 否则当作"打开文档"
+        const item = e.target.closest('.project-doc-item');
+        if (!item) return;
+        const filename = item.dataset.filename;
+        if (!filename) return;
+        loadProjectDocumentDetail(filename);
+    });
+    projectDocVersionSelect?.addEventListener('change', (e) => {
+        if (!currentProjectDocument) return;
+        loadProjectDocumentVersion(currentProjectDocument, e.target.value);
+    });
+
+    // 全局文档
+    globalDocsBtn?.addEventListener('click', openGlobalDocsDialog);
+    globalDocsCloseBtn?.addEventListener('click', closeGlobalDocsDialog);
+    globalDocsRefreshBtn?.addEventListener('click', loadGlobalDocuments);
+    globalDocsSearch?.addEventListener('input', renderGlobalDocuments);
+    globalDocsUploadBtn?.addEventListener('click', () => globalDocsFileInput?.click());
+    globalDocsFileInput?.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            uploadGlobalDocs(e.target.files);
+        }
+        e.target.value = '';
+    });
+    globalDocsList?.addEventListener('click', async (e) => {
+        const deleteBtn = e.target.closest('.project-doc-delete-btn');
+        if (deleteBtn) {
+            e.stopPropagation();
+            const filename = deleteBtn.dataset.deleteFilename;
+            if (filename) {
+                await deleteGlobalDocument(filename);
+            }
+            return;
+        }
+
+        const item = e.target.closest('.project-doc-item');
+        if (!item) return;
+        const filename = item.dataset.filename;
+        if (!filename) return;
+        loadGlobalDocumentDetail(filename);
+    });
+
+    hiddenFileInput?.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            uploadDocs(e.target.files);
+        }
+
+        // 允许再次选择同一个文件时也能触发 change
+        e.target.value = '';
+    });
+
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    userInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+    });
+
+    document.getElementById('switch-user-btn')?.addEventListener('click', () => {
+        if (!confirm('切换用户需要重新登录。\n是否退出当前账号并返回登录页？')) return;
+        localStorage.removeItem("currentUserId");
+        localStorage.removeItem("currentProjectId");
+        localStorage.removeItem("currentChatId");
+        localStorage.removeItem("isAdmin");
+        window.location.href = '/';
+    });
+
+    // ---------- 退出登录 ----------
+    document.getElementById('logout-btn')?.addEventListener('click', () => {
+        if (!confirm('确定退出登录？')) return;
+        localStorage.removeItem("currentUserId");
+        localStorage.removeItem("currentProjectId");
+        localStorage.removeItem("currentChatId");
+        localStorage.removeItem("isAdmin");
+        window.location.href = '/';
+    });
+
+    // ---------- 页面初始化 ----------
+    window.addEventListener('DOMContentLoaded', async () => {
+        const savedContext = loadSavedContext();
+
+        // 未登录 → 跳回登录页
+        if (!savedContext.userId) {
+            window.location.href = '/';
+            return;
+        }
+
+        await switchUser(savedContext.userId, { skipSave: true });
+
+        if (savedContext.projectId && savedContext.projectId !== currentProjectId) {
+            await switchProject(savedContext.projectId);
+        }
+
+        if (savedContext.chatId && savedContext.chatId !== currentChatId) {
+            await switchChat(savedContext.chatId);
+        }
+
+        saveCurrentContext();
+        await refreshProjectInfo();
+
+        if (chatContainer.children.length === 0) {
+            addAssistantMessage('你好，我是 Unity AI 代码助手。请提出你的需求。');
+        }
+    });
+</script>
+
+</body>
+</html>
